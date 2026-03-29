@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCreateItem } from "@/hooks/use-lists";
 import { useSpeech } from "@/hooks/use-speech";
+import { parsePriceFromSpeech } from "@/lib/parse-price";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
@@ -18,14 +19,25 @@ export function ItemForm({ listId }: ItemFormProps) {
   const [price, setPrice] = useState("");
   const { mutateAsync, isPending } = useCreateItem(listId);
 
-  const handleSpeechResult = useCallback((text: string) => {
+  const handleNameSpeech = useCallback((text: string) => {
     setName(text);
-    toast.info(`Ouvido: "${text}"`);
+    toast.info(`Produto: "${text}"`);
   }, []);
 
-  const { listening, supported, toggle } = useSpeech(handleSpeechResult);
+  const handlePriceSpeech = useCallback((text: string) => {
+    const parsed = parsePriceFromSpeech(text);
+    if (parsed !== null) {
+      setPrice(parsed.toFixed(2));
+      toast.success(`Preço: R$ ${parsed.toFixed(2)}`);
+    } else {
+      toast.error(`Não entendi "${text}". Tente: "dois reais e cinquenta"`);
+    }
+  }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const { listening: listeningName, supported, toggle: toggleName } = useSpeech(handleNameSpeech);
+  const { listening: listeningPrice, toggle: togglePrice } = useSpeech(handlePriceSpeech);
+
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!name.trim()) return;
     await mutateAsync({
@@ -42,6 +54,8 @@ export function ItemForm({ listId }: ItemFormProps) {
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
       <h3 className="font-semibold text-gray-900">Adicionar item</h3>
+
+      {/* Produto */}
       <div className="space-y-2">
         <Label htmlFor="item-name" className="text-base">
           Produto
@@ -57,16 +71,18 @@ export function ItemForm({ listId }: ItemFormProps) {
           {supported && (
             <Button
               type="button"
-              variant={listening ? "destructive" : "outline"}
-              onClick={toggle}
+              variant={listeningName ? "destructive" : "outline"}
+              onClick={toggleName}
               className="h-12 px-4 shrink-0"
-              title={listening ? "Parar gravação" : "Falar nome do produto"}
+              title={listeningName ? "Parar gravação" : "Falar nome do produto"}
             >
-              {listening ? "⏹ Parar" : "🎤 Falar"}
+              {listeningName ? "⏹ Parar" : "🎤 Falar"}
             </Button>
           )}
         </div>
       </div>
+
+      {/* Quantidade e Preço */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label htmlFor="item-qty" className="text-base">
@@ -82,22 +98,47 @@ export function ItemForm({ listId }: ItemFormProps) {
             className="text-base h-12"
           />
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="item-price" className="text-base">
             Preço (R$)
           </Label>
-          <Input
-            id="item-price"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="0,00"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="text-base h-12"
-          />
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm select-none">
+                R$
+              </span>
+              <Input
+                id="item-price"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="pl-9 text-base h-12"
+              />
+            </div>
+            {supported && (
+              <Button
+                type="button"
+                variant={listeningPrice ? "destructive" : "outline"}
+                onClick={togglePrice}
+                className="h-12 px-3 shrink-0"
+                title={listeningPrice ? "Parar gravação" : "Falar o preço"}
+              >
+                {listeningPrice ? "⏹" : "🎤"}
+              </Button>
+            )}
+          </div>
+          {supported && (
+            <p className="text-xs text-gray-400 leading-snug">
+              Diga: <span className="italic">"três vírgula cinquenta"</span>
+            </p>
+          )}
         </div>
       </div>
+
       <Button
         type="submit"
         disabled={isPending || !name.trim()}
