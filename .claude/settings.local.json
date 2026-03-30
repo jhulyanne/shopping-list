@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(node -e \"require\\(''next/dist/esm/server/config-shared.js''\\)\")",
+      "Bash(rm -rf node_modules/.cache)",
+      "Bash(npm install:*)"
     ]
   }
 }
