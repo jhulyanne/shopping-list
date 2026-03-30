@@ -44,7 +44,7 @@ export function ListCard({ list }: ListCardProps) {
         </Link>
         <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
           <DialogTrigger render={<Button variant="ghost" size="sm" className="text-gray-400 hover:text-red-600 shrink-0" />}>
-            🗑
+            🗑️
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>

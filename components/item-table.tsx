@@ -97,7 +97,7 @@ function ItemRow({ listId, item }: { listId: number; item: ItemRow }) {
 
           <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <DialogTrigger render={<Button variant="ghost" size="sm" className="h-9 px-2 text-gray-500 hover:text-red-600" />}>
-              🗑
+              🗑️
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
