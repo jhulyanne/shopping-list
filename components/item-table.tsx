@@ -131,7 +131,10 @@ function ItemRow({ listId, item }: { listId: number; item: ItemRow }) {
   );
 }
 
+const PAGE_SIZE = 10;
+
 export function ItemTable({ listId, items }: ItemTableProps) {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const total = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
   if (items.length === 0) {
@@ -143,6 +146,9 @@ export function ItemTable({ listId, items }: ItemTableProps) {
       </div>
     );
   }
+
+  const visibleItems = items.slice(0, visibleCount);
+  const hiddenCount = items.length - visibleCount;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -158,9 +164,23 @@ export function ItemTable({ listId, items }: ItemTableProps) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <ItemRow key={item.id} listId={listId} item={item} />
             ))}
+            {hiddenCount > 0 && (
+              <tr className="border-t border-gray-100">
+                <td colSpan={5} className="py-3 px-3 text-center">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-base text-gray-500 hover:text-gray-800 h-10"
+                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                  >
+                    Carregar mais ({hiddenCount} {hiddenCount === 1 ? "item" : "itens"})
+                  </Button>
+                </td>
+              </tr>
+            )}
           </tbody>
           <tfoot>
             <tr className="bg-gray-50 border-t-2 border-gray-200">
