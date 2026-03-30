@@ -43,7 +43,7 @@ function EditItemDialog({ listId, item, onClose }: { listId: number; item: ItemR
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label className="text-base">Quantidade</Label>
-          <Input type="number" min="0.01" step="0.01" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="text-base h-12" />
+          <Input type="number" min="1" step="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="text-base h-12" />
         </div>
         <div className="space-y-2">
           <Label className="text-base">Preço (R$)</Label>

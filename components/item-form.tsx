@@ -91,8 +91,8 @@ export function ItemForm({ listId }: ItemFormProps) {
           <Input
             id="item-qty"
             type="number"
-            min="0.01"
-            step="0.01"
+            min="1"
+            step="1"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             className="text-base h-12"
