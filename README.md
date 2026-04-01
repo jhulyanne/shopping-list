@@ -4,7 +4,7 @@
 
 ## Visão Geral
 
-Aplicação web full-stack para gerenciamento de listas de compras, com suporte a controle de orçamento e entrada de dados por reconhecimento de voz.
+Aplicação web para gerenciamento de listas de compras, com suporte a controle de orçamento, entrada de dados por reconhecimento de voz e exportação em PDF. Todos os dados são salvos no `localStorage` do navegador — sem banco de dados, sem variáveis de ambiente.
 
 ## Funcionalidades
 
@@ -12,15 +12,15 @@ Aplicação web full-stack para gerenciamento de listas de compras, com suporte 
 - Adição de itens com nome, quantidade e preço
 - Reconhecimento de voz para nome e preço dos produtos
 - Controle de orçamento por lista com alertas visuais (80% / 100%)
-- Persistência local (SQLite) e em nuvem (Turso)
+- Exportação de lista em PDF via impressão nativa do navegador
+- Persistência automática no `localStorage` (sem servidor de banco de dados)
 
 ## Stack
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Framework | Next.js 14 (App Router) |
-| Banco de dados | SQLite (dev) / Turso (produção) |
-| ORM | Drizzle ORM |
+| Framework | Next.js (App Router) |
+| Persistência | localStorage (navegador) |
 | UI | Tailwind CSS + shadcn/ui |
 | Estado | TanStack Query |
 | Voz | Web Speech API (nativa) |
@@ -34,20 +34,8 @@ npm install
 # Iniciar servidor de desenvolvimento
 npm run dev
 
-# Aplicar migrações do banco
-npm run db:migrate
-
-# Abrir visualizador do banco
-npm run db:studio
+# Build de produção
+npm run build
 ```
 
-## Variáveis de Ambiente
-
-Para produção com Turso, configure:
-
-```env
-DATABASE_URL=libsql://...
-DATABASE_AUTH_TOKEN=...
-```
-
-Em desenvolvimento, um arquivo `shopping.db` local é criado automaticamente.
+Nenhuma variável de ambiente necessária.
