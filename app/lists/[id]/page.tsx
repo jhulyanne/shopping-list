@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 function EditListDialog({ listId, currentName, currentBudget, onClose }: {
-  listId: number;
+  listId: string;
   currentName: string;
   currentBudget: number | null;
   onClose: () => void;
@@ -66,7 +66,7 @@ function EditListDialog({ listId, currentName, currentBudget, onClose }: {
 export default function ListPage() {
   const params = useParams();
   const router = useRouter();
-  const listId = Number(params.id);
+  const listId = params.id as string;
   const { data: list, isLoading } = useList(listId);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -91,14 +91,17 @@ export default function ListPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" onClick={() => router.push("/")} className="h-10 px-2 text-gray-600">
+        <Button variant="ghost" onClick={() => router.push("/")} className="h-10 px-2 text-gray-600 no-print">
           ← Voltar
         </Button>
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900 truncate">{list.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 truncate print-title">{list.name}</h1>
         </div>
+        <Button variant="outline" size="sm" className="h-10 shrink-0 no-print" onClick={() => window.print()} title="Exportar como PDF">
+          🖨️ PDF
+        </Button>
         <Dialog open={editOpen} onOpenChange={setEditOpen}>
-          <DialogTrigger render={<Button variant="outline" size="sm" className="h-10 shrink-0" />}>
+          <DialogTrigger render={<Button variant="outline" size="sm" className="h-10 shrink-0 no-print" />}>
             ✏️ Editar
           </DialogTrigger>
           <DialogContent>
@@ -119,7 +122,9 @@ export default function ListPage() {
         <BudgetAlert total={total} budgetLimit={list.budgetLimit} />
       )}
 
-      <ItemForm listId={listId} />
+      <div className="no-print">
+        <ItemForm listId={listId} />
+      </div>
       <ItemTable listId={listId} items={list.items} />
     </div>
   );

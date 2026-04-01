@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useDeleteList } from "@/hooks/use-lists";
-import type { ListSummary } from "@/lib/api";
+import type { ListSummary } from "@/lib/storage";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";

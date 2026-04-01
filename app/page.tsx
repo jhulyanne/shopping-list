@@ -3,7 +3,7 @@
 import { CreateListDialog } from "@/components/create-list-dialog";
 import { ListCard } from "@/components/list-card";
 import { useLists } from "@/hooks/use-lists";
-import type { ListSummary } from "@/lib/api";
+import type { ListSummary } from "@/lib/storage";
 
 function groupByDate(lists: ListSummary[]): Record<string, ListSummary[]> {
   return lists.reduce<Record<string, ListSummary[]>>((acc, list) => {

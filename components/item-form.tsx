@@ -10,7 +10,7 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 interface ItemFormProps {
-  listId: number;
+  listId: string;
 }
 
 export function ItemForm({ listId }: ItemFormProps) {

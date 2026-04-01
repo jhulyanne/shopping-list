@@ -1,29 +1,29 @@
 "use client";
 
-import { api } from "@/lib/api";
+import * as storage from "@/lib/storage";
 import type { CreateItemInput, CreateListInput, UpdateItemInput, UpdateListInput } from "@/lib/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useLists() {
-  return useQuery({ queryKey: ["lists"], queryFn: api.lists.getAll });
+  return useQuery({ queryKey: ["lists"], queryFn: storage.getLists, staleTime: Infinity });
 }
 
-export function useList(id: number) {
-  return useQuery({ queryKey: ["lists", id], queryFn: () => api.lists.getOne(id) });
+export function useList(id: string) {
+  return useQuery({ queryKey: ["lists", id], queryFn: () => storage.getList(id), staleTime: Infinity });
 }
 
 export function useCreateList() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateListInput) => api.lists.create(data),
+    mutationFn: (data: CreateListInput) => Promise.resolve(storage.createList(data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["lists"] }),
   });
 }
 
-export function useUpdateList(id: number) {
+export function useUpdateList(id: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: UpdateListInput) => api.lists.update(id, data),
+    mutationFn: (data: UpdateListInput) => Promise.resolve(storage.updateList(id, data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["lists"] }),
   });
 }
@@ -31,32 +31,38 @@ export function useUpdateList(id: number) {
 export function useDeleteList() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => api.lists.delete(id),
+    mutationFn: (id: string) => {
+      storage.deleteList(id);
+      return Promise.resolve();
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["lists"] }),
   });
 }
 
-export function useCreateItem(listId: number) {
+export function useCreateItem(listId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateItemInput) => api.items.create(listId, data),
+    mutationFn: (data: CreateItemInput) => Promise.resolve(storage.createItem(listId, data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["lists", listId] }),
   });
 }
 
-export function useUpdateItem(listId: number) {
+export function useUpdateItem(listId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ itemId, data }: { itemId: number; data: UpdateItemInput }) =>
-      api.items.update(listId, itemId, data),
+    mutationFn: ({ itemId, data }: { itemId: string; data: UpdateItemInput }) =>
+      Promise.resolve(storage.updateItem(listId, itemId, data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["lists", listId] }),
   });
 }
 
-export function useDeleteItem(listId: number) {
+export function useDeleteItem(listId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (itemId: number) => api.items.delete(listId, itemId),
+    mutationFn: (itemId: string) => {
+      storage.deleteItem(listId, itemId);
+      return Promise.resolve();
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["lists", listId] }),
   });
 }

@@ -5,16 +5,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeleteItem, useUpdateItem } from "@/hooks/use-lists";
-import type { ItemRow } from "@/lib/api";
+import type { ItemRow } from "@/lib/storage";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface ItemTableProps {
-  listId: number;
+  listId: string;
   items: ItemRow[];
 }
 
-function EditItemDialog({ listId, item, onClose }: { listId: number; item: ItemRow; onClose: () => void }) {
+function EditItemDialog({ listId, item, onClose }: { listId: string; item: ItemRow; onClose: () => void }) {
   const [name, setName] = useState(item.name);
   const [quantity, setQuantity] = useState(String(item.quantity));
   const [price, setPrice] = useState(String(item.price));
@@ -62,7 +62,7 @@ function EditItemDialog({ listId, item, onClose }: { listId: number; item: ItemR
   );
 }
 
-function ItemRow({ listId, item }: { listId: number; item: ItemRow }) {
+function ItemRow({ listId, item }: { listId: string; item: ItemRow }) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { mutateAsync: deleteItem, isPending: deleting } = useDeleteItem(listId);
